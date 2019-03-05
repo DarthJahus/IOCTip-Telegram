@@ -1,0 +1,29 @@
+# cp ./ioctip.service /lib/systemd/system/ioctip.service
+# chmod 644 /lib/systemd/system/ioctip.service
+# Don't forget #!/usr/bin/python
+# chmod +x ./ioctip.py
+# systemctl daemon-reload
+# systemctl enable ioctip.service
+# systemctl start ioctip.service
+# Status:
+# systemctl status ioctip.service
+# To stop:
+# systemctl stop ioctip.service
+# To remove
+# systemctl disable ioctip.service
+
+[Unit]
+Description=IOCTipBot
+After=syslog.target
+After=network.target
+After=pandacoind.service
+
+[Service]
+Type=simple
+ExecStart=/pandacoin/ioctip-telegram/IOCTip.py
+WorkingDirectory=/pandacoin/ioctip-telegram/
+Restart=always
+RestartSec=600
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,37 @@
+# assuming iocoind binary is /iocoin/daemon/iocoind
+# assuming chmod+x /iocoin/daemon/iocoind
+#
+# Copy the service file:
+# cp ./iocoind.service /lib/systemd/system/iocoind.service
+# chmod 644 /lib/systemd/system/iocoind.service
+#
+# Install service file:
+# systemctl daemon-reload
+# systemctl enable iocoind.service
+# Run service:
+# systemctl start iocoind.service
+# Check status:
+# systemctl status iocoind.service
+# Stop service:
+# systemctl stop iocoind.service
+#
+# Remove service:
+# systemctl disable iocoind.service
+
+[Unit]
+Description=Pandacoin Deamon
+After=syslog.target
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/iocoin/data/iocoind.pid
+ExecStart=/iocoin/daemon/iocoind -daemon -staking=0 -datadir=/iocoin/data/ -pid=iocoind.pid -conf=iocoin.conf
+ExecStop=/iocoin/daemon/iocoind stop
+ExecReload=/iocoin/daemon/iocoind stop ; /bin/sleep 60 ; /iocoin/daemon/iocoind -daemon -staking=0 -datadir=/iocoin/data/ -pid=iocoind.pid -conf=iocoin.conf
+RestartSec=300
+WorkingDirectory=/iocoin/data/
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
