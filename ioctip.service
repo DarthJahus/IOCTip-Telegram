@@ -16,12 +16,12 @@
 Description=IOCTipBot
 After=syslog.target
 After=network.target
-After=pandacoind.service
+After=iocoind.service
 
 [Service]
 Type=simple
-ExecStart=/pandacoin/ioctip-telegram/IOCTip.py
-WorkingDirectory=/pandacoin/ioctip-telegram/
+ExecStart=/iocoin/ioctip-telegram/IOCTip.py
+WorkingDirectory=/iocoin/ioctip-telegram/
 Restart=always
 RestartSec=600
 
