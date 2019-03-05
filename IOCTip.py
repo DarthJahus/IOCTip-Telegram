@@ -38,6 +38,11 @@ __rain_queue_max_members = 30  # Max members in a queue, 30
 __rain_min_members = 5  # 5
 __rain_min_amount = 10  # 10
 
+__rpc_getbalance_account = True  # If True, use getbalance <account>, else use getbalance <address>
+__rpc_sendmany_account = False   # If False, use sendmany <source_account> {"address": amount}, else {"account": amount}
+__blockchain_explorer_tx = "https://chainz.cryptoid.info/ioc/tx.dws?"
+__minconf = 0  # See issue #4 (https://github.com/DarthJahus/CashTip-Telegram/issues/4)
+
 
 # ToDo: Add service commands to check the health of the daemon / wallet.
 
@@ -300,7 +305,10 @@ def balance(bot, update):
 				# Maybe if something really weird happens and user ends up having more, we can calculate his balance.
 				# This way, when asking for address (/deposit), we can return the first one.
 				_address = _addresses[0]
-				_rpc_call = __wallet_rpc.getbalance(_address)
+				if __rpc_getbalance_account:
+					_rpc_call = __wallet_rpc.getbalance(_user_id, __minconf)
+				else:
+					_rpc_call = __wallet_rpc.getbalance(_address, __minconf)
 				if not _rpc_call["success"]:
 					print("Error during RPC call.")
 					log("balance", _user_id, "(2) getbalance > Error during RPC call: %s" % _rpc_call["message"])
@@ -553,7 +561,10 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 		else:
 			_address = _addresses[0]
 			# Get user's balance
-			_rpc_call = __wallet_rpc.getbalance(_address)
+			if __rpc_getbalance_account:
+				_rpc_call = __wallet_rpc.getbalance(_user_id, __minconf)
+			else:
+				_rpc_call = __wallet_rpc.getbalance(_address, __minconf)
 			if not _rpc_call["success"]:
 				print("Error during RPC call.")
 				log("do_tip", _user_id, "(2) getbalance > Error during RPC call: %s" % _rpc_call["message"])
@@ -708,7 +719,10 @@ def withdraw(bot, update, args):
 					msg_no_account(bot, update)
 				else:
 					_address = _addresses[0]
-					_rpc_call = __wallet_rpc.getbalance(_address)
+					if __rpc_getbalance_account:
+						_rpc_call = __wallet_rpc.getbalance(_user_id, __minconf)
+					else:
+						_rpc_call = __wallet_rpc.getbalance(_address, __minconf)
 					if not _rpc_call["success"]:
 						print("Error during RPC call.")
 						log("withdraw", _user_id, "(2) getbalance > Error during RPC call: %s" % _rpc_call["message"])
@@ -787,7 +801,10 @@ def scavenge(bot, update):
 					)
 				else:
 					_address = _addresses[0]
-					_rpc_call = __wallet_rpc.getbalance(_address)
+					if __rpc_getbalance_account:
+						_rpc_call = __wallet_rpc.getbalance(_user_id, __minconf)
+					else:
+						_rpc_call = __wallet_rpc.getbalance(_address, __minconf)
 					if not _rpc_call["success"]:
 						print("Error during RPC call.")
 						log("scavenge", _user_id, "(2) getbalance > Error during RPC call: %s" % _rpc_call["message"])
