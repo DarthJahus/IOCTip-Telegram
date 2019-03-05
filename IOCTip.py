@@ -232,7 +232,7 @@ def deposit(bot, update):
 		_address = None
 		_rpc_call = __wallet_rpc.getaddressesbyaccount(_user_id)
 		if not _rpc_call["success"]:
-			print("Error during RPC call.")
+			print("Error during RPC call: %s" % _rpc_call["message"])
 			log("deposit", _user_id, "getaddressesbyaccount > Error during RPC call.")
 		else:
 			if _rpc_call["result"]["error"] is not None:
