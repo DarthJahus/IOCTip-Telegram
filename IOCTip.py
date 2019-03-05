@@ -45,8 +45,8 @@ __rpc_sendmany_account = False   # If False, use sendmany <source_account> {"add
 __blockchain_explorer_tx = "https://chainz.cryptoid.info/ioc/tx.dws?"
 __minconf = 0  # See issue #4 (https://github.com/DarthJahus/CashTip-Telegram/issues/4)
 
-__withdrawal_fee = 2
-__scavenge_fee = 5
+__withdrawal_fee = 1
+__scavenge_fee = 1
 
 
 # ToDo: Add service commands to check the health of the daemon / wallet.
