@@ -32,11 +32,11 @@ __wallet_rpc = RPCWrapper(PandaRPC(config["rpc-uri"], (config["rpc-user"], confi
 __rain_queue_filter = filters.Filters.group & (
 		filters.Filters.text | filters.Filters.photo | filters.Filters.video | filters.Filters.reply | filters.Filters.forwarded
 	)
-__rain_queue_min_text_length = 10  # 10
-__rain_queue_min_words = 2  # 2
-__rain_queue_max_members = 30  # Max members in a queue, 30
-__rain_min_members = 5  # 5
-__rain_min_amount = 10  # 10
+__rain_queue_min_text_length = config["rain"]["rain_queue_min_text_length"]  # 10
+__rain_queue_min_words = config["rain"]["rain_queue_min_words"]  # 2
+__rain_queue_max_members = config["rain"]["rain_queue_max_members"]  # Max members in a queue, 30
+__rain_min_members = config["rain"]["rain_min_members"]  # 5
+__rain_min_amount = config["rain"]["rain_min_amount"]  # 10
 
 __unit = "IOC"
 
@@ -45,6 +45,7 @@ __rpc_sendmany_account = False   # If False, use sendmany <source_account> {"add
 __blockchain_explorer_tx = "https://chainz.cryptoid.info/ioc/tx.dws?"
 __minconf = 0  # See issue #4 (https://github.com/DarthJahus/CashTip-Telegram/issues/4)
 
+__standard_fee = 0.1
 __withdrawal_fee = 1
 __scavenge_fee = 1
 
@@ -567,9 +568,10 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 			else:
 				_balance = int(_rpc_call["result"]["result"])
 				# Now, finally, check if user has enough funds (includes tx fee)
-				if sum(_amounts_float) > _balance - max(1, int(len(recipients)/3)):
+				_fee = max(__standard_fee, int(len(recipients)/3)*__standard_fee)
+				if sum(_amounts_float) > _balance - _fee:
 					update.message.reply_text(
-						text="%s `%i %s`" % (strings.get("tip_no_funds", _lang), sum(_amounts_float) + max(1, int(len(recipients)/3)), __unit),
+						text="%s `%i %s`" % (strings.get("tip_no_funds", _lang), sum(_amounts_float) + _fee, __unit),
 						quote=True,
 						parse_mode=ParseMode.MARKDOWN
 					)
@@ -721,7 +723,7 @@ def withdraw(bot, update, args):
 						log("withdraw", _user_id, "(2) getbalance > Error: %s" % _rpc_call["result"]["error"])
 					else:
 						_balance = int(_rpc_call["result"]["result"])
-						if _balance < _amount + 5:
+						if _balance < _amount + __withdrawal_fee:
 							update.message.reply_text(
 								text="%s `%i %s`" % (strings.get("withdraw_no_funds", _lang), max(0, _balance-__withdrawal_fee), __unit),
 								quote=True,
@@ -827,7 +829,7 @@ def scavenge(bot, update):
 									_address = _addresses[0]
 								if _address is not None:
 									# Move the funds from UserID to Username
-									# ToDo: Make the fees consistent
+									# Done: Make the fees consistent (2019-03-05)
 									_rpc_call = __wallet_rpc.sendfrom(_user_id, _address, _balance-__scavenge_fee)
 									if not _rpc_call["success"]:
 										log("scavenge", _user_id, "(5) sendfrom > Error during RPC call: %s" % _rpc_call["message"])

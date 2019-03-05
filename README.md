@@ -25,7 +25,14 @@ Create a `config.json` **JSON** file and set up the following parameters:
     	"rpc-user": "suchuser",
     	"rpc-psw": "suchpassword",
     	"admins": [-0, 0],
-    	"spam_filter": [5, 60]
+    	"spam_filter": [5, 60],
+    	"rain": {
+    	    "rain_queue_min_text_length": 10,
+    	    "rain_queue_min_words": 2,
+    	    "rain_queue_max_members": 30,
+    	    "rain_min_members": 5,
+    	    "rain_min_amount": 10
+    	}
     }
 
 * `telegram-token`: Your bot's unique and secret token.
