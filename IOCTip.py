@@ -38,6 +38,8 @@ __rain_queue_max_members = 30  # Max members in a queue, 30
 __rain_min_members = 5  # 5
 __rain_min_amount = 10  # 10
 
+__unit = "IOC"
+
 __rpc_getbalance_account = True  # If True, use getbalance <account>, else use getbalance <address>
 __rpc_sendmany_account = False   # If False, use sendmany <source_account> {"address": amount}, else {"account": amount}
 __blockchain_explorer_tx = "https://chainz.cryptoid.info/ioc/tx.dws?"
@@ -310,7 +312,7 @@ def balance(bot, update):
 				else:
 					_balance = int(_rpc_call["result"]["result"])
 					update.message.reply_text(
-						text="%s\n`%i PND`" % (strings.get("user_balance", _lang), _balance),
+						text="%s\n`%i %s`" % (strings.get("user_balance", _lang), _balance, __unit),
 						parse_mode=ParseMode.MARKDOWN,
 						quote=True
 					)
@@ -465,7 +467,7 @@ def rain(bot, update, args):
 			return  # Don't show error. Probably trolling.
 		if _rain_amount_demanded < __rain_min_amount:
 			update.message.reply_text(
-				strings.get("rain_queue_min_amount", _lang) % (__rain_min_amount, "PND", _rain_amount_demanded, "PND"),
+				strings.get("rain_queue_min_amount", _lang) % (__rain_min_amount, __unit, _rain_amount_demanded, __unit),
 				quote=True,
 				parse_mode=ParseMode.MARKDOWN,
 				disable_web_page_preview=True
@@ -564,7 +566,7 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 				# Now, finally, check if user has enough funds (includes tx fee)
 				if sum(_amounts_float) > _balance - max(1, int(len(recipients)/3)):
 					update.message.reply_text(
-						text="%s `%i PND`" % (strings.get("tip_no_funds", _lang), sum(_amounts_float) + max(1, int(len(recipients)/3))),
+						text="%s `%i %s`" % (strings.get("tip_no_funds", _lang), sum(_amounts_float) + max(1, int(len(recipients)/3)), __unit),
 						quote=True,
 						parse_mode=ParseMode.MARKDOWN
 					)
@@ -634,9 +636,9 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 							text = "*%s* %s\n%s\n\n[tx %s](%s)%s" % (
 								update.effective_user.name,
 								strings.get("%s_success" % verb, _lang),
-								''.join((("\n- `%3.0f PND ` %s *%s*" % (_tip_dict[_recipient_id], strings.get("%s_preposition" % verb, _lang), handled[_recipient_id][0])) for _recipient_id in _tip_dict)),
+								''.join((("\n- `%3.0f %s ` %s *%s*" % (_tip_dict[_recipient_id], strings.get("%s_preposition" % verb, _lang), handled[_recipient_id][0], __unit)) for _recipient_id in _tip_dict)),
 								_tx[:4] + "..." + _tx[-4:],
-								"https://chainz.cryptoid.info/pnd/tx.dws?" + _tx,
+								__blockchain_explorer_tx + _tx,
 								_suppl
 							),
 							quote=True,
@@ -711,7 +713,7 @@ def withdraw(bot, update, args):
 						_balance = int(_rpc_call["result"]["result"])
 						if _balance < _amount + 5:
 							update.message.reply_text(
-								text="%s `%i PND`" % (strings.get("withdraw_no_funds", _lang), _balance-5),
+								text="%s `%i %s`" % (strings.get("withdraw_no_funds", _lang), _balance-5, __unit),
 								quote=True,
 								parse_mode=ParseMode.MARKDOWN
 							)
@@ -728,7 +730,7 @@ def withdraw(bot, update, args):
 									text="%s\n[tx %s](%s)" % (
 										strings.get("withdraw_success", _lang),
 										_tx[:4]+"..."+_tx[-4:],
-										"https://chainz.cryptoid.info/pnd/tx.dws?" + _tx
+										__blockchain_explorer_tx + _tx
 									),
 									quote=True,
 									parse_mode=ParseMode.MARKDOWN,
@@ -824,13 +826,14 @@ def scavenge(bot, update):
 									else:
 										_tx = _rpc_call["result"]["result"]
 										update.message.reply_text(
-											text="%s (`%s`).\n%s `%i PND`\n[tx %s](%s)" % (
+											text="%s (`%s`).\n%s `%i %s`\n[tx %s](%s)" % (
 												strings.get("scavenge_success_1", _lang),
 												_user_id,
 												strings.get("scavenge_success_2", _lang),
 												_balance-5,
+												__unit,
 												_tx[:4]+"..."+_tx[-4:],
-												"https://chainz.cryptoid.info/pnd/tx.dws?" + _tx,
+												__blockchain_explorer_tx + _tx,
 											),
 											quote=True,
 											parse_mode=ParseMode.MARKDOWN,
@@ -839,22 +842,11 @@ def scavenge(bot, update):
 
 
 def convert_to_int(text):
-	# with panda feature :D (2018-07-18)
 	try:
-		# try convert to float
+		# try convert to int
 		return int(text)
 	except:
-		# Check if the text is made of pandas
-		if len(text)/2 > 3 or len(text) == 0 or len(text) % 2 != 0:
-			raise ValueError("Can't convert %s to int." % text)
-		else:
-			_panda = emoji.emojize(":panda_face:", use_aliases=True)
-			print(len(text))
-			for i in range(len(text)):
-				if text[i] != _panda[i%2]:
-					raise ValueError("Can't convert %s to int." % text)
-			else:
-				return 10**(int(len(text)/2))
+		raise ValueError("Can't convert %s to int." % text)
 
 
 def cmd_send_log(bot, update):
