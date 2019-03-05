@@ -286,10 +286,8 @@ def balance(bot, update):
 		# get address of user
 		_rpc_call = __wallet_rpc.getaddressesbyaccount(_user_id)
 		if not _rpc_call["success"]:
-			print("Error during RPC call: %s" % _rpc_call["message"])
 			log("balance", _user_id, "(1) getaddressesbyaccount > Error during RPC call: %s" % _rpc_call["message"])
 		elif _rpc_call["result"]["error"] is not None:
-			print("Error: %s" % _rpc_call["result"]["error"])
 			log("balance", _user_id, "(1) getaddressesbyaccount > Error: %s" % _rpc_call["result"]["error"])
 		else:
 			_addresses = _rpc_call["result"]["result"]
@@ -306,10 +304,8 @@ def balance(bot, update):
 				else:
 					_rpc_call = __wallet_rpc.getbalance(_address, __minconf)
 				if not _rpc_call["success"]:
-					print("Error during RPC call.")
 					log("balance", _user_id, "(2) getbalance > Error during RPC call: %s" % _rpc_call["message"])
 				elif _rpc_call["result"]["error"] is not None:
-					print("Error: %s" % _rpc_call["result"]["error"])
 					log("balance", _user_id, "(2) getbalance > Error: %s" % _rpc_call["result"]["error"])
 				else:
 					_balance = int(_rpc_call["result"]["result"])
@@ -544,10 +540,8 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 	# get address of user
 	_rpc_call = __wallet_rpc.getaddressesbyaccount(_user_id)
 	if not _rpc_call["success"]:
-		print("Error during RPC call: %s" % _rpc_call["message"])
 		log("do_tip", _user_id, "(1) getaddressesbyaccount > Error during RPC call: %s" % _rpc_call["message"])
 	elif _rpc_call["result"]["error"] is not None:
-		print("Error: %s" % _rpc_call["result"]["error"])
 		log("do_tip", _user_id, "(1) getaddressesbyaccount > Error: %s" % _rpc_call["result"]["error"])
 	else:
 		_addresses = _rpc_call["result"]["result"]
@@ -562,10 +556,8 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 			else:
 				_rpc_call = __wallet_rpc.getbalance(_address, __minconf)
 			if not _rpc_call["success"]:
-				print("Error during RPC call.")
 				log("do_tip", _user_id, "(2) getbalance > Error during RPC call: %s" % _rpc_call["message"])
 			elif _rpc_call["result"]["error"] is not None:
-				print("Error: %s" % _rpc_call["result"]["error"])
 				log("do_tip", _user_id, "(2) getbalance > Error: %s" % _rpc_call["result"]["error"])
 			else:
 				_balance = int(_rpc_call["result"]["result"])
@@ -598,10 +590,8 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 						# Check if recipient has an address (required for .sendmany()
 						_rpc_call = __wallet_rpc.getaddressesbyaccount(_recipient_id)
 						if not _rpc_call["success"]:
-							print("Error during RPC call.")
 							log("do_tip", _user_id, "(3) getaddressesbyaccount(%s) > Error during RPC call: %s" % (_recipient_id, _rpc_call["message"]))
 						elif _rpc_call["result"]["error"] is not None:
-							print("Error: %s" % _rpc_call["result"]["error"])
 							log("do_tip", _user_id, "(3) getaddressesbyaccount(%s) > Error: %s" % (_recipient_id, _rpc_call["result"]["error"]))
 						else:
 							_address = None
@@ -610,10 +600,8 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 								# Recipient has no address, create one
 								_rpc_call = __wallet_rpc.getaccountaddress(_recipient_id)
 								if not _rpc_call["success"]:
-									print("Error during RPC call.")
 									log("do_tip", _user_id, "(4) getaccountaddress(%s) > Error during RPC call: %s" % (_recipient_id, _rpc_call["message"]))
 								elif _rpc_call["result"]["error"] is not None:
-									print("Error: %s" % _rpc_call["result"]["error"])
 									log("do_tip", _user_id, "(4) getaccountaddress(%s) > Error: %s" % (_recipient_id, _rpc_call["result"]["error"]))
 								else:
 									_address = _rpc_call["result"]["result"]
@@ -634,10 +622,8 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 					# sendmany <from address or account> {receive address or account:amount,...} [minconf=1] [comment]
 					_rpc_call = __wallet_rpc.sendmany(_user_id, _tip_dict)
 					if not _rpc_call["success"]:
-						print("Error during RPC call.")
 						log("do_tip", _user_id, "(4) sendmany > Error during RPC call: %s" % _rpc_call["message"])
 					elif _rpc_call["result"]["error"] is not None:
-						print("Error: %s" % _rpc_call["result"]["error"])
 						log("do_tip", _user_id, "(4) sendmany > Error: %s" % _rpc_call["result"]["error"])
 					else:
 						_tx = _rpc_call["result"]["result"]
@@ -703,10 +689,8 @@ def withdraw(bot, update, args):
 			# get address of user
 			_rpc_call = __wallet_rpc.getaddressesbyaccount(_user_id)
 			if not _rpc_call["success"]:
-				print("Error during RPC call: %s" % _rpc_call["message"])
 				log("withdraw", _user_id, "(1) getaddressesbyaccount > Error during RPC call: %s" % _rpc_call["message"])
 			elif _rpc_call["result"]["error"] is not None:
-				print("Error: %s" % _rpc_call["result"]["error"])
 				log("withdraw", _user_id, "(1) getaddressesbyaccount > Error: %s" % _rpc_call["result"]["error"])
 			else:
 				_addresses = _rpc_call["result"]["result"]
@@ -720,10 +704,8 @@ def withdraw(bot, update, args):
 					else:
 						_rpc_call = __wallet_rpc.getbalance(_address, __minconf)
 					if not _rpc_call["success"]:
-						print("Error during RPC call.")
 						log("withdraw", _user_id, "(2) getbalance > Error during RPC call: %s" % _rpc_call["message"])
 					elif _rpc_call["result"]["error"] is not None:
-						print("Error: %s" % _rpc_call["result"]["error"])
 						log("withdraw", _user_id, "(2) getbalance > Error: %s" % _rpc_call["result"]["error"])
 					else:
 						_balance = int(_rpc_call["result"]["result"])
@@ -737,10 +719,8 @@ def withdraw(bot, update, args):
 							# Withdraw
 							_rpc_call = __wallet_rpc.sendfrom(_user_id, _recipient, _amount)
 							if not _rpc_call["success"]:
-								print("Error during RPC call.")
 								log("withdraw", _user_id, "(3) sendfrom > Error during RPC call: %s" % _rpc_call["message"])
 							elif _rpc_call["result"]["error"] is not None:
-								print("Error: %s" % _rpc_call["result"]["error"])
 								log("withdraw", _user_id, "(3) sendfrom > Error: %s" % _rpc_call["result"]["error"])
 							else:
 								_tx = _rpc_call["result"]["result"]
@@ -783,10 +763,8 @@ def scavenge(bot, update):
 			# get address of user
 			_rpc_call = __wallet_rpc.getaddressesbyaccount(_user_id)
 			if not _rpc_call["success"]:
-				print("Error during RPC call: %s" % _rpc_call["message"])
 				log("scavenge", _user_id, "(1) getaddressesbyaccount > Error during RPC call: %s" % _rpc_call["message"])
 			elif _rpc_call["result"]["error"] is not None:
-				print("Error: %s" % _rpc_call["result"]["error"])
 				log("scavenge", _user_id, "(1) getaddressesbyaccount > Error: %s" % _rpc_call["result"]["error"])
 			else:
 				_addresses = _rpc_call["result"]["result"]
@@ -802,10 +780,8 @@ def scavenge(bot, update):
 					else:
 						_rpc_call = __wallet_rpc.getbalance(_address, __minconf)
 					if not _rpc_call["success"]:
-						print("Error during RPC call.")
 						log("scavenge", _user_id, "(2) getbalance > Error during RPC call: %s" % _rpc_call["message"])
 					elif _rpc_call["result"]["error"] is not None:
-						print("Error: %s" % _rpc_call["result"]["error"])
 						log("scavenge", _user_id, "(2) getbalance > Error: %s" % _rpc_call["result"]["error"])
 					else:
 						_balance = int(_rpc_call["result"]["result"])
@@ -820,10 +796,8 @@ def scavenge(bot, update):
 							# Need to make sure there is an account for _username
 							_rpc_call = __wallet_rpc.getaddressesbyaccount(_username)
 							if not _rpc_call["success"]:
-								print("Error during RPC call: %s" % _rpc_call["message"])
 								log("scavenge", _user_id, "(3) getaddressesbyaccount > Error during RPC call: %s" % _rpc_call["message"])
 							elif _rpc_call["result"]["error"] is not None:
-								print("Error: %s" % _rpc_call["result"]["error"])
 								log("scavenge", _user_id, "(3) getaddressesbyaccount > Error: %s" % _rpc_call["result"]["error"])
 							else:
 								_address = None
@@ -832,10 +806,8 @@ def scavenge(bot, update):
 									# Create an address for user (_username)
 									_rpc_call = __wallet_rpc.getaccountaddress(_username)
 									if not _rpc_call["success"]:
-										print("Error during RPC call.")
 										log("scavenge", _user_id, "(4) getaccountaddress > Error during RPC call: %s" % _rpc_call["message"])
 									elif _rpc_call["result"]["error"] is not None:
-										print("Error: %s" % _rpc_call["result"]["error"])
 										log("scavenge", _user_id, "(4) getaccountaddress > Error: %s" % _rpc_call["result"]["error"])
 									else:
 										_address = _rpc_call["result"]["result"]
@@ -846,10 +818,8 @@ def scavenge(bot, update):
 									# ToDo: Make the fees consistent
 									_rpc_call = __wallet_rpc.sendfrom(_user_id, _address, _balance-5)
 									if not _rpc_call["success"]:
-										print("Error during RPC call.")
 										log("scavenge", _user_id, "(5) sendfrom > Error during RPC call: %s" % _rpc_call["message"])
 									elif _rpc_call["result"]["error"] is not None:
-										print("Error: %s" % _rpc_call["result"]["error"])
 										log("scavenge", _user_id, "(5) sendfrom > Error: %s" % _rpc_call["result"]["error"])
 									else:
 										_tx = _rpc_call["result"]["result"]
