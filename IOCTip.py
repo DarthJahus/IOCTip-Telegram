@@ -576,7 +576,8 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 				else:
 					# Now create the {recipient_id: amount} dictionary
 					i = 0
-					_tip_dict = {}
+					_tip_dict_addresses = {}
+					_tip_dict_accounts = {}
 					for _recipient in recipients:
 						# add "or _recipient == bot.id" to disallow tipping the tip bot
 						if _recipient == _user_id:
@@ -592,7 +593,7 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 							_recipient_id = _recipient.lower()  # Enforce lowercase
 						else:
 							_recipient_id = _recipient
-						# Check if recipient has an address (required for .sendmany()
+						# Check if recipient has an address (required for .sendmany())
 						_rpc_call = __wallet_rpc.getaddressesbyaccount(_recipient_id)
 						if not _rpc_call["success"]:
 							log("do_tip", _user_id, "(3) getaddressesbyaccount(%s) > Error during RPC call: %s" % (_recipient_id, _rpc_call["message"]))
@@ -615,9 +616,15 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 								_address = _addresses[0]
 						if _address is not None:
 							# Because recipient has an address, we can add him to the dict
-							_tip_dict[_recipient_id] = _amounts_float[i]
+							_tip_dict_accounts[_recipient_id] = _amounts_float[i]
+							_tip_dict_addresses[_address] = _amounts_float[i]
 						i += 1
 					#
+					_tip_dict = {}
+					if __rpc_sendmany_account:
+						_tip_dict = _tip_dict_accounts
+					else:
+						_tip_dict = _tip_dict_addresses
 					# Check if there are users left to tip
 					if len(_tip_dict) == 0:
 						return
@@ -636,7 +643,7 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 						if len(_tip_dict) != len(recipients):
 							_suppl = "\n\n_%s_" % strings.get("%s_missing_recipient" % verb, _lang)
 						update.message.reply_text(
-							text = "*%s* %s\n%s\n\n[tx %s](%s)%s" % (
+							text="*%s* %s\n%s\n\n[tx %s](%s)%s" % (
 								update.effective_user.name,
 								strings.get("%s_success" % verb, _lang),
 								''.join((("\n- `%3.0f %s ` %s *%s*" % (_tip_dict[_recipient_id], strings.get("%s_preposition" % verb, _lang), handled[_recipient_id][0], __unit)) for _recipient_id in _tip_dict)),
