@@ -45,6 +45,9 @@ __rpc_sendmany_account = False   # If False, use sendmany <source_account> {"add
 __blockchain_explorer_tx = "https://chainz.cryptoid.info/ioc/tx.dws?"
 __minconf = 0  # See issue #4 (https://github.com/DarthJahus/CashTip-Telegram/issues/4)
 
+__withdrawal_fee = 2
+__scavenge_fee = 5
+
 
 # ToDo: Add service commands to check the health of the daemon / wallet.
 
@@ -713,7 +716,7 @@ def withdraw(bot, update, args):
 						_balance = int(_rpc_call["result"]["result"])
 						if _balance < _amount + 5:
 							update.message.reply_text(
-								text="%s `%i %s`" % (strings.get("withdraw_no_funds", _lang), _balance-5, __unit),
+								text="%s `%i %s`" % (strings.get("withdraw_no_funds", _lang), max(0, _balance-__withdrawal_fee), __unit),
 								quote=True,
 								parse_mode=ParseMode.MARKDOWN
 							)
@@ -818,7 +821,7 @@ def scavenge(bot, update):
 								if _address is not None:
 									# Move the funds from UserID to Username
 									# ToDo: Make the fees consistent
-									_rpc_call = __wallet_rpc.sendfrom(_user_id, _address, _balance-5)
+									_rpc_call = __wallet_rpc.sendfrom(_user_id, _address, _balance-__scavenge_fee)
 									if not _rpc_call["success"]:
 										log("scavenge", _user_id, "(5) sendfrom > Error during RPC call: %s" % _rpc_call["message"])
 									elif _rpc_call["result"]["error"] is not None:
@@ -830,7 +833,7 @@ def scavenge(bot, update):
 												strings.get("scavenge_success_1", _lang),
 												_user_id,
 												strings.get("scavenge_success_2", _lang),
-												_balance-5,
+												_balance-__scavenge_fee,
 												__unit,
 												_tx[:4]+"..."+_tx[-4:],
 												__blockchain_explorer_tx + _tx,
