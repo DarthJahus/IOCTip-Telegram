@@ -37,6 +37,7 @@ def log(fun, user, message, debug=True):
 		datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S") + ',' +
 		','.join([fun, user, "\"" + message.replace('\"', '\'').replace('\n', '|') + "\""]) + "\n"
 	)
+	print(_log)
 	with codecs.open("log.csv", 'a', "utf-8") as _file:
 		_file.write(_log)
 		if debug: print("*log = " + _log)

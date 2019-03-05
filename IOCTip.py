@@ -232,11 +232,9 @@ def deposit(bot, update):
 		_address = None
 		_rpc_call = __wallet_rpc.getaddressesbyaccount(_user_id)
 		if not _rpc_call["success"]:
-			print("Error during RPC call: %s" % _rpc_call["message"])
 			log("deposit", _user_id, "getaddressesbyaccount > Error during RPC call.")
 		else:
 			if _rpc_call["result"]["error"] is not None:
-				print("Error: %s" % _rpc_call["result"]["error"])
 				log("deposit", _user_id, "getaddressesbyaccount > Error: %s" % _rpc_call["result"]["error"])
 			else:
 				# Check if user already has an address. This will prevent creating another address if user has one
@@ -245,11 +243,9 @@ def deposit(bot, update):
 					# Done: User has no address, request a new one (2018-07-16)
 					_rpc_call = __wallet_rpc.getaccountaddress(_user_id)
 					if not _rpc_call["success"]:
-						print("Error during RPC call.")
 						log("deposit", _user_id, "getaccountaddress > Error during RPC call.")
 					else:
 						if _rpc_call["result"]["error"] is not None:
-							print("Error: %s" % _rpc_call["result"]["error"])
 							log("deposit", _user_id, "getaccountaddress > Error: %s" % _rpc_call["result"]["error"])
 						else:
 							_address = _rpc_call["result"]["result"]
