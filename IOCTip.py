@@ -648,7 +648,7 @@ def do_tip(bot, update, amounts_float, recipients, handled, verb="tip"):
 							text="*%s* %s\n%s\n\n[tx %s](%s)%s" % (
 								update.effective_user.name,
 								strings.get("%s_success" % verb, _lang),
-								''.join((("\n- `%3.0f %s ` %s *%s*" % (_tip_dict_accounts[_recipient_id], strings.get("%s_preposition" % verb, _lang), handled[_recipient_id][0], __unit)) for _recipient_id in _tip_dict_accounts)),
+								''.join((("\n- `%3.0f %s ` %s *%s*" % (_tip_dict_accounts[_recipient_id], __unit, strings.get("%s_preposition" % verb, _lang), handled[_recipient_id][0])) for _recipient_id in _tip_dict_accounts)),
 								_tx[:4] + "..." + _tx[-4:],
 								__blockchain_explorer_tx + _tx,
 								_suppl
