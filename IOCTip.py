@@ -907,6 +907,8 @@ def cmd_queue(bot, update):
 	if update.effective_chat.id in config["admins"]:
 		if _chat_id in _rain_queues:
 			update.message.reply_text("There are %i users in queue." % len(_rain_queues[_chat_id]), quote=True)
+		else:
+			update.message.reply_text("Chat not found in queues", quote=True)
 
 
 if __name__ == "__main__":
