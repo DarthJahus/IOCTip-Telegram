@@ -901,6 +901,14 @@ def cmd_pause(bot, update):
 		_rain_queues.clear()
 
 
+def cmd_queue(bot, update):
+	# Admins only
+	_chat_id = str(update.effective_chat.id)
+	if update.effective_chat.id in config["admins"]:
+		if _chat_id in _rain_queues:
+			update.message.reply_text("There are %i users in queue." % len(_rain_queues[_chat_id]), quote=True)
+
+
 if __name__ == "__main__":
 	updater = Updater(token=config["telegram-token"])
 	dispatcher = updater.dispatcher
@@ -922,7 +930,8 @@ if __name__ == "__main__":
 	dispatcher.add_handler(CommandHandler("send_log", cmd_send_log))
 	dispatcher.add_handler(CommandHandler("get_log", cmd_send_log))
 	dispatcher.add_handler(CommandHandler("clear_log", cmd_clear_log))
-	dispatcher.add_handler(CommandHandler("pause", cmd_pause)) # pause / unpause
+	dispatcher.add_handler(CommandHandler("pause", cmd_pause))  # pause / unpause
+	dispatcher.add_handler(CommandHandler("queue", cmd_queue))  # get length of the queue
 	# This will be needed for rain
 	dispatcher.add_handler(MessageHandler(__rain_queue_filter, damp_rock))
 	#
