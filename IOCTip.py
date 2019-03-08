@@ -904,7 +904,7 @@ def cmd_pause(bot, update):
 def cmd_queue(bot, update):
 	# Admins only
 	_chat_id = str(update.effective_chat.id)
-	if update.effective_chat.id in config["admins"]:
+	if update.effective_user.id in config["admins"]:
 		if _chat_id in _rain_queues:
 			update.message.reply_text("There are %i users in queue." % len(_rain_queues[_chat_id]), quote=True)
 		else:
